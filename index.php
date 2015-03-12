@@ -59,8 +59,13 @@ $PAGE->set_context($context);
 $PAGE->set_title($coursename);
 $PAGE->set_heading($coursename);
 
-$output = $PAGE->get_renderer('core'); // TODO, switch.
+$logreader = get_log_manager()->get_readers('\core\log\sql_select_reader');
+$logreader = reset($logreader);
+
+$renderable = new \report_analytics\output\renderable($logreader, $courseid);
+$output = $PAGE->get_renderer('report_analytics');
 echo $output->header();
+echo $output->render($renderable);
 
 // Trigger a logs viewed event.
 $event = \report_analytics\event\report_viewed::create(array('context' => $context));
